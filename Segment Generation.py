@@ -21,11 +21,11 @@ The raw .ITS files will be segmented first neetly into x-second segments, on whi
 # The output CSV file will merge all the segments from the ITS files.
 # Segments from different ITS files will be concatenated in the order they are listed, differentiated by the 'filename' column.
 # Filename can be specified as command line arguments, otherwise the default files will be used.
-FILENAME_LENA  = ['1.its'] if len(sys.argv) < 2 else sys.argv[1:]
+FILENAME_LENA  = ['1.its'] if len(sys.argv) < 3 else sys.argv[2:]
 FILENAME_CSV = 'Segmented output.csv'
 
 # 
-OFFSET_SECONDS  = 0  # Offset in seconds to start the segments
+OFFSET_SECONDS  = 0  if len(sys.argv) == 1 else sys.argv[1] # Offset in seconds to start the segments
 WINDOW_SECONDS = 60  # Duration of each output segment in seconds
 
 
@@ -226,7 +226,7 @@ def fixed_length_segments(df, window, offset=0):
 if __name__=="__main__":
     results = []
     for filename in FILENAME_LENA:
-        print(f"Processing file: {filename}")
+        print(f"Processing file: {filename} with window size {WINDOW_SECONDS} seconds and offset {OFFSET_SECONDS} seconds.")
         
         # Fist, retrieve segments from the ITS file in a dataframe format.
         # Relevant attributes are parsed and stored, recording duration of various speakers and segment types. 
