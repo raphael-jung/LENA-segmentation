@@ -235,6 +235,7 @@ if __name__=="__main__":
 
         # Now, feed the dataframe into the pre-determined time window segments.
         segments = fixed_length_segments(df_segments, WINDOW_SECONDS, OFFSET_SECONDS)
+        print(f"Processing completed: {filename} has {len(segments)} fixed-length segments.")
         results.extend(segments)
 
     # Concatenate all segments into a single DataFrame
@@ -243,3 +244,4 @@ if __name__=="__main__":
     # Save the segments to a CSV file
     segments_df.to_csv(FILENAME_CSV, index=False)
     print(f"Segments saved to {FILENAME_CSV}")
+
