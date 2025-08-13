@@ -1,6 +1,7 @@
 import xml.etree.ElementTree as ET
 import pandas as pd
 import numpy as np
+import sys
 import re
 
 """
@@ -19,7 +20,8 @@ The raw .ITS files will be segmented first neetly into x-second segments, on whi
 # Multiple ITS files can be specified in the list.
 # The output CSV file will merge all the segments from the ITS files.
 # Segments from different ITS files will be concatenated in the order they are listed, differentiated by the 'filename' column.
-FILENAME_LENA  = ['1.its', '2.its']
+# Filename can be specified as command line arguments, otherwise the default files will be used.
+FILENAME_LENA  = ['1.its'] if len(sys.argv) < 2 else sys.argv[1:]
 FILENAME_CSV = 'Segmented output.csv'
 
 # 
@@ -39,25 +41,24 @@ SEGMENT_COLS_PARSING = ['childCryVfxLen', 'childUttLen',
                 'femaleAdultNonSpeechLen', 'femaleAdultUttLen', 
                 'maleAdultNonSpeechLen',  'maleAdultUttLen']
 
-ATTRIBUTE_COLS = ['Conversation', 'Pause', 'CHF', 'CHN', 'CXF', 'CXN', 'FAF', 'FAN', 'MAF', 'MAN', 'NOF', 'NON', 'OLF', 'OLN', 'SIL', 'TVF', 'TVN']
+ATTRIBUTE_COLS = ['Conversation', 'Pause', 'CHF', 'CHN', 'CXF', 'CXN', 
+                  'FAF', 'FAN', 'MAF', 'MAN', 'NOF', 'NON', 'OLF', 'OLN', 'SIL', 'TVF', 'TVN']
 
 # Get the normalization columns - these are the columns that will undergo numerical conversion (and summation).
 NORMALIZED_COLS = list(set(WRAPPER_COLS + SEGMENT_COLS_BASIC + SEGMENT_COLS_PARSING + ATTRIBUTE_COLS) - {'average_dB', 'peak_dB'})
 
-# The LENA raw output follows the ISO 8601 format for time durations.
-# However, it is not strictly enforced, therefore existing parser such as isodate.parse_duration() would fail time to time.
-# The most frequent issue is that the duration is not in the correct format, such as "P123.45S" instead of "PT123.45S".
-# For the purpose of parsing the time in this code, we will use a simple custom function to parse the time by eleminating characters from the attibutes.
-def parse_time(t):
-    # None can be passed, so we need to check if t is not None.
-    if t:
-        # Removes all non-numeric characters except '.' and converts to float.
-        num_str = re.sub(r'[^\d.]', '', t)
-        return float(num_str) if num_str else 0.0
-    return 0.0
-
-
 def retreive_segments_from_its(filename):
+    # The LENA raw output follows the ISO 8601 format for time durations.
+    # However, it is not strictly enforced, therefore existing parser such as isodate.parse_duration() would fail time to time.
+    # The most frequent issue is that the duration is not in the correct format, such as "P123.45S" instead of "PT123.45S".
+    # For the purpose of parsing the time in this code, we will use a simple custom function to parse the time by eleminating characters from the attibutes.
+    def parse_time(t):
+        # None can be passed, so we need to check if t is not None.
+        if t:
+            # Removes all non-numeric characters except '.' and converts to float.
+            num_str = re.sub(r'[^\d.]', '', t)
+            return float(num_str) if num_str else 0.0
+        return 0.0
     root = ET.parse(filename).getroot() # Load ITS XML file from the root
     raw_data = []  # Reset the list to hold the raw data.
 
