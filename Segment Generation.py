@@ -21,12 +21,13 @@ The raw .ITS files will be segmented first neetly into x-second segments, on whi
 # The output CSV file will merge all the segments from the ITS files.
 # Segments from different ITS files will be concatenated in the order they are listed, differentiated by the 'filename' column.
 # Filename can be specified as command line arguments, otherwise the default files will be used.
-FILENAME_LENA  = ['1.its'] if len(sys.argv) < 3 else sys.argv[2:]
+FILENAME_LENA  = ['1.its'] if len(sys.argv) < 4 else sys.argv[3:]
 FILENAME_CSV = 'Segmented output.csv'
 
-# 
+# can fed as command line arguments, otherwise the default values will be used.
+# example: python Segment_Generation.py OFFSET_SECONDS WINDOW_SECONDS FILENAME_LENA
 OFFSET_SECONDS  = 0  if len(sys.argv) == 1 else sys.argv[1] # Offset in seconds to start the segments
-WINDOW_SECONDS = 60  # Duration of each output segment in seconds
+WINDOW_SECONDS = 60  if len(sys.argv) <= 2 else sys.argv[2] # Duration of each output segment in seconds
 
 
 # Names of the attributes inside the wrapper and their segment elements.
