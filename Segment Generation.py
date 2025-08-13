@@ -26,8 +26,8 @@ FILENAME_CSV = 'Segmented output.csv'
 
 # can fed as command line arguments, otherwise the default values will be used.
 # example: python Segment_Generation.py OFFSET_SECONDS WINDOW_SECONDS FILENAME_LENA
-OFFSET_SECONDS  = 0  if len(sys.argv) == 1 else sys.argv[1] # Offset in seconds to start the segments
-WINDOW_SECONDS = 60  if len(sys.argv) <= 2 else sys.argv[2] # Duration of each output segment in seconds
+OFFSET_SECONDS  = 0  if len(sys.argv) == 1 else float(sys.argv[1]) # Offset in seconds to start the segments
+WINDOW_SECONDS = 60  if len(sys.argv) <= 2 else float(sys.argv[2]) # Duration of each output segment in seconds
 
 
 # Names of the attributes inside the wrapper and their segment elements.
@@ -244,4 +244,5 @@ if __name__=="__main__":
     # Save the segments to a CSV file
     segments_df.to_csv(FILENAME_CSV, index=False)
     print(f"Segments saved to {FILENAME_CSV}")
+
 
